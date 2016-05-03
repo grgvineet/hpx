@@ -8,7 +8,6 @@
 
 #include <hpx/runtime/naming/resolver_client.hpp>
 #include <hpx/runtime/agas/interface.hpp>
-#include <hpx/runtime/agas/server/component_namespace.hpp>
 #include <hpx/runtime/actions/continuation.hpp>
 #include <hpx/runtime/components/pinned_ptr.hpp>
 #include <hpx/runtime/components/stubs/runtime_support.hpp>
@@ -57,28 +56,6 @@ lcos::future<bool> register_name(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool unregister_name_sync(
-    std::string const& name
-  , naming::id_type& gid
-  , error_code& ec
-    )
-{
-    naming::resolver_client& agas_ = naming::get_agas_client();
-
-    naming::gid_type raw_gid;
-
-    if (agas_.unregister_name(name, raw_gid, ec) && !ec)
-    {
-        gid = naming::id_type(raw_gid,
-            naming::detail::has_credits(raw_gid) ?
-                naming::id_type::managed :
-                naming::id_type::unmanaged);
-        return true;
-    }
-
-    return false;
-}
-
 naming::id_type unregister_name_sync(
     std::string const& name
   , error_code& ec
@@ -97,37 +74,13 @@ lcos::future<naming::id_type> unregister_name(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool resolve_name_sync(
+naming::id_type resolve_name_sync(
     std::string const& name
-  , naming::gid_type& gid
   , error_code& ec
     )
 {
     naming::resolver_client& agas_ = naming::get_agas_client();
-    return agas_.resolve_name(name, gid, ec);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-bool resolve_name_sync(
-    std::string const& name
-  , naming::id_type& gid
-  , error_code& ec
-    )
-{
-    naming::resolver_client& agas_ = naming::get_agas_client();
-
-    naming::gid_type raw_gid;
-
-    if (agas_.resolve_name(name, raw_gid, ec) && !ec)
-    {
-        gid = naming::id_type(raw_gid,
-            naming::detail::has_credits(raw_gid) ?
-                naming::id_type::managed :
-                naming::id_type::unmanaged);
-        return true;
-    }
-
-    return false;
+    return agas_.resolve_name(name, ec);
 }
 
 lcos::future<naming::id_type> resolve_name(
@@ -136,15 +89,6 @@ lcos::future<naming::id_type> resolve_name(
 {
     naming::resolver_client& agas_ = naming::get_agas_client();
     return agas_.resolve_name_async(name);
-}
-
-naming::id_type resolve_name_sync(
-    std::string const& name
-  , error_code& ec
-    )
-{
-    naming::resolver_client& agas_ = naming::get_agas_client();
-    return agas_.resolve_name(name, ec);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -510,11 +454,10 @@ naming::id_type get_colocation_id_sync(
 
 ///////////////////////////////////////////////////////////////////////////////
 hpx::future<hpx::id_type> on_symbol_namespace_event(
-    std::string const& name, agas::namespace_action_code evt,
-    bool call_for_past_events)
+    std::string const& name, bool call_for_past_events)
 {
     naming::resolver_client& resolver = naming::get_agas_client();
-    return resolver.on_symbol_namespace_event(name, evt, call_for_past_events);
+    return resolver.on_symbol_namespace_event(name, call_for_past_events);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -959,9 +959,8 @@ namespace hpx { namespace performance_counters
         // pre-pend prefix, if necessary
 
         // ask AGAS for the id of the given counter
-        naming::id_type id;
-        bool result = agas::resolve_name_sync(complemented_info.fullname_, id, ec);
-        if (!result) {
+        naming::id_type id = agas::resolve_name_sync(complemented_info.fullname_, ec);
+        if (id == naming::invalid_id) {
             try {
                 // figure out target locality
                 counter_path_elements p;
