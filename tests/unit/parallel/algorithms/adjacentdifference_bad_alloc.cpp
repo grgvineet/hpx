@@ -7,9 +7,9 @@
 #include <hpx/hpx.hpp>
 #include <hpx/include/parallel_adjacent_difference.hpp>
 #include <hpx/util/lightweight_test.hpp>
-#include <boost/range/functions.hpp>
 
 #include <cstddef>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -33,8 +33,8 @@ void test_adjacent_difference_bad_alloc(ExPolicy policy, IteratorTag)
     bool caught_bad_alloc = false;
     try {
         hpx::parallel::adjacent_difference(policy,
-            decorated_iterator(boost::begin(c)),
-            decorated_iterator(boost::end(c)), boost::begin(d),
+            decorated_iterator(std::begin(c)),
+            decorated_iterator(std::end(c)), std::begin(d),
             [](std::size_t lhs, std::size_t rhs) -> std::size_t
             {
                 throw std::bad_alloc();
@@ -67,8 +67,8 @@ void test_adjacent_difference_bad_alloc_async(ExPolicy p, IteratorTag)
     try {
         hpx::future<base_iterator> f =
         hpx::parallel::adjacent_difference(p,
-            decorated_iterator(boost::begin(c)),
-            decorated_iterator(boost::end(c)), boost::begin(d),
+            decorated_iterator(std::begin(c)),
+            decorated_iterator(std::end(c)), std::begin(d),
             [](std::size_t lhs, std::size_t rhs) -> std::size_t
             {
                 throw std::bad_alloc();

@@ -8,9 +8,8 @@
 #include <hpx/include/parallel_reverse.hpp>
 #include <hpx/util/lightweight_test.hpp>
 
-#include <boost/range/functions.hpp>
-
 #include <cstddef>
+#include <iterator>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -33,16 +32,16 @@ void test_reverse(ExPolicy policy, IteratorTag)
     test_vector c(10007);
     std::vector<std::size_t> d1;
 
-    std::iota(boost::begin(c.base()), boost::end(c.base()), std::rand());
-    std::copy(boost::begin(c.base()), boost::end(c.base()), std::back_inserter(d1));
+    std::iota(std::begin(c.base()), std::end(c.base()), std::rand());
+    std::copy(std::begin(c.base()), std::end(c.base()), std::back_inserter(d1));
 
     hpx::parallel::reverse(policy, c);
 
-    std::reverse(boost::begin(d1), boost::end(d1));
+    std::reverse(std::begin(d1), std::end(d1));
 
     std::size_t count = 0;
-    HPX_TEST(std::equal(boost::begin(c.base()), boost::end(c.base()),
-        boost::begin(d1),
+    HPX_TEST(std::equal(std::begin(c.base()), std::end(c.base()),
+        std::begin(d1),
         [&count](std::size_t v1, std::size_t v2) -> bool {
             HPX_TEST_EQ(v1, v2);
             ++count;
@@ -62,17 +61,17 @@ void test_reverse_async(ExPolicy p, IteratorTag)
     test_vector c(10007);
     std::vector<std::size_t> d1;
 
-    std::iota(boost::begin(c.base()), boost::end(c.base()), std::rand());
-    std::copy(boost::begin(c.base()), boost::end(c.base()), std::back_inserter(d1));
+    std::iota(std::begin(c.base()), std::end(c.base()), std::rand());
+    std::copy(std::begin(c.base()), std::end(c.base()), std::back_inserter(d1));
 
     auto f = hpx::parallel::reverse(p, c);
     f.wait();
 
-    std::reverse(boost::begin(d1), boost::end(d1));
+    std::reverse(std::begin(d1), std::end(d1));
 
     std::size_t count = 0;
-    HPX_TEST(std::equal(boost::begin(c.base()), boost::end(c.base()),
-        boost::begin(d1),
+    HPX_TEST(std::equal(std::begin(c.base()), std::end(c.base()),
+        std::begin(d1),
         [&count](std::size_t v1, std::size_t v2) -> bool {
             HPX_TEST_EQ(v1, v2);
             ++count;
@@ -121,15 +120,15 @@ void test_reverse_exception(ExPolicy policy, IteratorTag)
         decorated_iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_exception = false;
     try {
         hpx::parallel::reverse(policy,
             boost::make_iterator_range(
-                decorated_iterator(boost::begin(c)),
+                decorated_iterator(std::begin(c)),
                 decorated_iterator(
-                    boost::end(c),
+                    std::end(c),
                     [](){ throw std::runtime_error("test"); }
                 )));
         HPX_TEST(false);
@@ -153,7 +152,7 @@ void test_reverse_exception_async(ExPolicy p, IteratorTag)
         decorated_iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_exception = false;
     bool returned_from_algorithm = false;
@@ -161,9 +160,9 @@ void test_reverse_exception_async(ExPolicy p, IteratorTag)
         auto f =
             hpx::parallel::reverse(p,
                 boost::make_iterator_range(
-                    decorated_iterator(boost::begin(c)),
+                    decorated_iterator(std::begin(c)),
                     decorated_iterator(
-                        boost::end(c),
+                        std::end(c),
                         [](){ throw std::runtime_error("test"); }
                     )));
         returned_from_algorithm = true;
@@ -225,15 +224,15 @@ void test_reverse_bad_alloc(ExPolicy policy, IteratorTag)
         decorated_iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_bad_alloc = false;
     try {
         hpx::parallel::reverse(policy,
             boost::make_iterator_range(
-                decorated_iterator(boost::begin(c)),
+                decorated_iterator(std::begin(c)),
                 decorated_iterator(
-                    boost::end(c),
+                    std::end(c),
                     [](){ throw std::bad_alloc(); }
                 )));
         HPX_TEST(false);
@@ -256,7 +255,7 @@ void test_reverse_bad_alloc_async(ExPolicy p, IteratorTag)
         decorated_iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_bad_alloc = false;
     bool returned_from_algorithm = false;
@@ -264,9 +263,9 @@ void test_reverse_bad_alloc_async(ExPolicy p, IteratorTag)
         auto f =
             hpx::parallel::reverse(p,
                 boost::make_iterator_range(
-                    decorated_iterator(boost::begin(c)),
+                    decorated_iterator(std::begin(c)),
                     decorated_iterator(
-                        boost::end(c),
+                        std::end(c),
                         [](){ throw std::bad_alloc(); }
                     )));
         returned_from_algorithm = true;

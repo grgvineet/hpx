@@ -9,9 +9,9 @@
 #include <hpx/util/lightweight_test.hpp>
 
 #include <boost/iterator/counting_iterator.hpp>
-#include <boost/range/functions.hpp>
 
 #include <cstddef>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -23,7 +23,7 @@ void exclusive_scan_benchmark()
     try {
       std::vector<double> c(100000000);
       std::vector<double> d(c.size());
-      std::fill(boost::begin(c), boost::end(c), 1.0);
+      std::fill(std::begin(c), std::end(c), 1.0);
 
       double const val(0);
       auto op =
@@ -33,16 +33,16 @@ void exclusive_scan_benchmark()
 
       hpx::util::high_resolution_timer t;
       hpx::parallel::exclusive_scan(hpx::parallel::par,
-        boost::begin(c), boost::end(c), boost::begin(d),
+        std::begin(c), std::end(c), std::begin(d),
         val, op);
       double elapsed = t.elapsed();
 
       // verify values
       std::vector<double> e(c.size());
       hpx::parallel::v1::detail::sequential_exclusive_scan(
-          boost::begin(c), boost::end(c), boost::begin(e), val, op);
+          std::begin(c), std::end(c), std::begin(e), val, op);
 
-      bool ok = std::equal(boost::begin(d), boost::end(d), boost::begin(e));
+      bool ok = std::equal(std::begin(d), std::end(d), std::begin(e));
       HPX_TEST(ok);
       if (ok) {
           std::cout << "<DartMeasurement name=\"ExclusiveScanTime\" \n"
@@ -67,7 +67,7 @@ void test_exclusive_scan1(ExPolicy policy, IteratorTag)
 
     std::vector<std::size_t> c(10007);
     std::vector<std::size_t> d(c.size());
-    std::fill(boost::begin(c), boost::end(c), std::size_t(1));
+    std::fill(std::begin(c), std::end(c), std::size_t(1));
 
     std::size_t const val(0);
     auto op =
@@ -76,15 +76,15 @@ void test_exclusive_scan1(ExPolicy policy, IteratorTag)
         };
 
     hpx::parallel::exclusive_scan(policy,
-        iterator(boost::begin(c)), iterator(boost::end(c)), boost::begin(d),
+        iterator(std::begin(c)), iterator(std::end(c)), std::begin(d),
         val, op);
 
     // verify values
     std::vector<std::size_t> e(c.size());
     hpx::parallel::v1::detail::sequential_exclusive_scan(
-        boost::begin(c), boost::end(c), boost::begin(e), val, op);
+        std::begin(c), std::end(c), std::begin(e), val, op);
 
-    HPX_TEST(std::equal(boost::begin(d), boost::end(d), boost::begin(e)));
+    HPX_TEST(std::equal(std::begin(d), std::end(d), std::begin(e)));
 }
 
 template <typename ExPolicy, typename IteratorTag>
@@ -95,7 +95,7 @@ void test_exclusive_scan1_async(ExPolicy p, IteratorTag)
 
     std::vector<std::size_t> c(10007);
     std::vector<std::size_t> d(c.size());
-    std::fill(boost::begin(c), boost::end(c), std::size_t(1));
+    std::fill(std::begin(c), std::end(c), std::size_t(1));
 
     std::size_t const val(0);
     auto op =
@@ -105,16 +105,16 @@ void test_exclusive_scan1_async(ExPolicy p, IteratorTag)
 
     hpx::future<void> f =
         hpx::parallel::exclusive_scan(p,
-            iterator(boost::begin(c)), iterator(boost::end(c)), boost::begin(d),
+            iterator(std::begin(c)), iterator(std::end(c)), std::begin(d),
             val, op);
     f.wait();
 
     // verify values
     std::vector<std::size_t> e(c.size());
     hpx::parallel::v1::detail::sequential_exclusive_scan(
-        boost::begin(c), boost::end(c), boost::begin(e), val, op);
+        std::begin(c), std::end(c), std::begin(e), val, op);
 
-    HPX_TEST(std::equal(boost::begin(d), boost::end(d), boost::begin(e)));
+    HPX_TEST(std::equal(std::begin(d), std::end(d), std::begin(e)));
 }
 
 template <typename IteratorTag>

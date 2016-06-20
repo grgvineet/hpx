@@ -24,9 +24,9 @@
 #include <hpx/include/compute.hpp>
 
 #include <boost/format.hpp>
-#include <boost/range/functions.hpp>
 
 #include <cstddef>
+#include <iterator>
 #include <string>
 #include <utility>
 #include <vector>

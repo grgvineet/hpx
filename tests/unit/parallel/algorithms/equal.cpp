@@ -8,9 +8,8 @@
 #include <hpx/include/parallel_equal.hpp>
 #include <hpx/util/lightweight_test.hpp>
 
-#include <boost/range/functions.hpp>
-
 #include <cstddef>
+#include <iterator>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -32,16 +31,16 @@ void test_equal1(ExPolicy policy, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     {
         bool result = hpx::parallel::equal(policy,
-            iterator(boost::begin(c1)), iterator(boost::end(c1)),
-            boost::begin(c2));
+            iterator(std::begin(c1)), iterator(std::end(c1)),
+            std::begin(c2));
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result, expected);
@@ -50,11 +49,11 @@ void test_equal1(ExPolicy policy, IteratorTag)
     {
         ++c1[std::rand() % c1.size()]; //-V104
         bool result = hpx::parallel::equal(policy,
-            iterator(boost::begin(c1)), iterator(boost::end(c1)),
-            boost::begin(c2));
+            iterator(std::begin(c1)), iterator(std::end(c1)),
+            std::begin(c2));
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result, expected);
@@ -71,18 +70,18 @@ void test_equal1_async(ExPolicy p, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     {
         hpx::future<bool> result =
             hpx::parallel::equal(p,
-                iterator(boost::begin(c1)), iterator(boost::end(c1)),
-                boost::begin(c2));
+                iterator(std::begin(c1)), iterator(std::end(c1)),
+                std::begin(c2));
         result.wait();
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result.get(), expected);
@@ -93,12 +92,12 @@ void test_equal1_async(ExPolicy p, IteratorTag)
 
         hpx::future<bool> result =
             hpx::parallel::equal(p,
-                iterator(boost::begin(c1)), iterator(boost::end(c1)),
-                boost::begin(c2));
+                iterator(std::begin(c1)), iterator(std::end(c1)),
+                std::begin(c2));
         result.wait();
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result.get(), expected);
@@ -149,16 +148,16 @@ void test_equal2(ExPolicy policy, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     {
         bool result = hpx::parallel::equal(policy,
-            iterator(boost::begin(c1)), iterator(boost::end(c1)),
-            boost::begin(c2), std::equal_to<std::size_t>());
+            iterator(std::begin(c1)), iterator(std::end(c1)),
+            std::begin(c2), std::equal_to<std::size_t>());
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result, expected);
@@ -167,11 +166,11 @@ void test_equal2(ExPolicy policy, IteratorTag)
     {
         ++c1[std::rand() % c1.size()]; //-V104
         bool result = hpx::parallel::equal(policy,
-            iterator(boost::begin(c1)), iterator(boost::end(c1)),
-            boost::begin(c2), std::equal_to<std::size_t>());
+            iterator(std::begin(c1)), iterator(std::end(c1)),
+            std::begin(c2), std::equal_to<std::size_t>());
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result, expected);
@@ -188,18 +187,18 @@ void test_equal2_async(ExPolicy p, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     {
         hpx::future<bool> result =
             hpx::parallel::equal(p,
-                iterator(boost::begin(c1)), iterator(boost::end(c1)),
-                boost::begin(c2), std::equal_to<std::size_t>());
+                iterator(std::begin(c1)), iterator(std::end(c1)),
+                std::begin(c2), std::equal_to<std::size_t>());
         result.wait();
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result.get(), expected);
@@ -210,12 +209,12 @@ void test_equal2_async(ExPolicy p, IteratorTag)
 
         hpx::future<bool> result =
             hpx::parallel::equal(p,
-                iterator(boost::begin(c1)), iterator(boost::end(c1)),
-                boost::begin(c2), std::equal_to<std::size_t>());
+                iterator(std::begin(c1)), iterator(std::end(c1)),
+                std::begin(c2), std::equal_to<std::size_t>());
         result.wait();
 
-        bool expected = std::equal(boost::begin(c1), boost::end(c1),
-            boost::begin(c2));
+        bool expected = std::equal(std::begin(c1), std::end(c1),
+            std::begin(c2));
 
         // verify values
         HPX_TEST_EQ(result.get(), expected);
@@ -266,14 +265,14 @@ void test_equal_exception(ExPolicy policy, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     bool caught_exception = false;
     try {
         hpx::parallel::equal(policy,
-            iterator(boost::begin(c1)), iterator(boost::end(c1)),
-            boost::begin(c2),
+            iterator(std::begin(c1)), iterator(std::end(c1)),
+            std::begin(c2),
             [](std::size_t v1, std::size_t v2) {
                 return throw std::runtime_error("test"), true;
             });
@@ -301,16 +300,16 @@ void test_equal_exception_async(ExPolicy p, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     bool caught_exception = false;
     bool returned_from_algorithm = false;
     try {
         hpx::future<bool> f =
             hpx::parallel::equal(p,
-                iterator(boost::begin(c1)), iterator(boost::end(c1)),
-                boost::begin(c2),
+                iterator(std::begin(c1)), iterator(std::end(c1)),
+                std::begin(c2),
                 [](std::size_t v1, std::size_t v2) {
                     return throw std::runtime_error("test"), true;
                 });
@@ -376,14 +375,14 @@ void test_equal_bad_alloc(ExPolicy policy, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     bool caught_bad_alloc = false;
     try {
         hpx::parallel::equal(policy,
-            iterator(boost::begin(c1)), iterator(boost::end(c1)),
-            boost::begin(c2),
+            iterator(std::begin(c1)), iterator(std::end(c1)),
+            std::begin(c2),
             [](std::size_t v1, std::size_t v2) {
                 return throw std::bad_alloc(), true;
             });
@@ -410,16 +409,16 @@ void test_equal_bad_alloc_async(ExPolicy p, IteratorTag)
     std::vector<std::size_t> c2(c1.size());
 
     std::size_t first_value = std::rand(); //-V101
-    std::iota(boost::begin(c1), boost::end(c1), first_value);
-    std::iota(boost::begin(c2), boost::end(c2), first_value);
+    std::iota(std::begin(c1), std::end(c1), first_value);
+    std::iota(std::begin(c2), std::end(c2), first_value);
 
     bool caught_bad_alloc = false;
     bool returned_from_algorithm = false;
     try {
         hpx::future<bool> f =
             hpx::parallel::equal(p,
-                iterator(boost::begin(c1)), iterator(boost::end(c1)),
-                boost::begin(c2),
+                iterator(std::begin(c1)), iterator(std::end(c1)),
+                std::begin(c2),
                 [](std::size_t v1, std::size_t v2) {
                     return throw std::bad_alloc(), true;
                 });
