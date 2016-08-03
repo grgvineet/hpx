@@ -207,6 +207,7 @@ namespace hpx { namespace parcelset
           , std::shared_ptr<archive_type> const & archive
           , std::shared_ptr<future_await_container_type> const & future_await)
         {
+            FUNC_START_DEBUG_MSG
             future_await->reset();
 
             (*archive) << p;
@@ -220,6 +221,7 @@ namespace hpx { namespace parcelset
             //      needs to split.
             if(future_await->has_futures())
             {
+                LOG_DEBUG_MSG("parcel has futures - using bind put_parcel_await");
                 (*future_await)(
                     util::bind(
                         util::one_shot(&parcelport_impl::put_parcel_await), this,
@@ -228,12 +230,17 @@ namespace hpx { namespace parcelset
                 );
                 return;
             }
+            else if (!connection_handler_traits<ConnectionHandler>::use_connection_cache::value) {
+                send_parcel_immediate(dest, std::move(p), std::move(f), archive);
+            }
+            else {
+                // enqueue the outgoing parcel ...
+                enqueue_parcel(dest, std::move(p), std::move(f),
+                    std::move(future_await->new_gids_));
 
-            // enqueue the outgoing parcel ...
-            enqueue_parcel(dest, std::move(p), std::move(f),
-                std::move(future_await->new_gids_));
-
-            get_connection_and_send_parcels(dest);
+                get_connection_and_send_parcels(dest);
+            }
+            FUNC_END_DEBUG_MSG
         }
 
     public:
@@ -724,6 +731,62 @@ namespace hpx { namespace parcelset
         }
 
         ///////////////////////////////////////////////////////////////////////
+        void send_parcel_immediate(locality const& locality_id, parcel p,
+            write_handler_type handler, std::shared_ptr<archive_type> const & archive)
+        {
+//            FUNC_START_DEBUG_MSG
+
+            // If we are stopped already, discard pending parcels
+            if (hpx::is_stopped()) return;
+
+            error_code ec;
+            std::shared_ptr<connection> sender_connection =
+                connection_handler().create_connection(locality_id, ec);
+
+            new_gids_map new_gids;
+
+#if defined(HPX_DEBUG)
+            // verify the connection points to the right destination
+            HPX_ASSERT(locality_id == sender_connection->destination());
+            sender_connection->verify(locality_id);
+#endif
+            LOG_DEBUG_MSG("Calling encode_parcels from PP_impl");
+            // encode the parcels
+            std::size_t num_parcels = encode_parcels(&p, 1,
+                    sender_connection->buffer_,
+                    archive_flags_,
+                    this->get_max_outbound_message_size(),
+                    &new_gids);
+
+            using hpx::parcelset::detail::call_for_each;
+            using hpx::util::placeholders::_1;
+            using hpx::util::placeholders::_2;
+            using hpx::util::placeholders::_3;
+            if (num_parcels == 1)
+            {
+                ++operations_in_flight_;
+                // send all of the parcels
+                LOG_DEBUG_MSG("Calling async write from PP_impl");
+
+                sender_connection->async_write(
+                    [p{std::move(p)},handler{std::move(handler)}]
+                     (boost::system::error_code const& e)
+                {
+                    LOG_DEBUG_MSG("Calling handler in send immediate");
+                    handler(e, p);
+                },
+                util::bind(&parcelport_impl::send_pending_parcels_trampoline,
+                    this, _1, _2, _3));
+            }
+            else
+            {
+                std::terminate();
+            }
+
+//            FUNC_END_DEBUG_MSG
+        }
+
+        ///////////////////////////////////////////////////////////////////////
         void get_connection_and_send_parcels(
             locality const& locality_id, bool background = false)
         {
@@ -862,8 +925,6 @@ namespace hpx { namespace parcelset
                     archive_flags_,
                     this->get_max_outbound_message_size(),
                     &new_gids);
-
-//LOG_MEMORY_MSG("encode_parcels (send)", sender_connection->buffer_.data_.data(), 128);
 
             using hpx::parcelset::detail::call_for_each;
             using hpx::util::placeholders::_1;
