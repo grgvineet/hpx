@@ -24,6 +24,7 @@
 
 #include <mutex>
 #include <string>
+#include <utility>
 #include <vector>
 
 // TODO: Remove the use of the name "prefix"

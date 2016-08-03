@@ -429,38 +429,38 @@ string(TOUPPER ${HPX_WITH_THREAD_SCHEDULERS} HPX_WITH_THREAD_SCHEDULERS_UC)
 foreach(_scheduler ${HPX_WITH_THREAD_SCHEDULERS_UC})
   if(_scheduler STREQUAL "ALL")
     set(_all On)
-    set(HPX_HAVE_ALL_SCHEDULERS ON CACHE INTERNAL "")
+    set(HPX_WITH_ALL_SCHEDULERS ON CACHE INTERNAL "")
   endif()
   if(_scheduler STREQUAL "ABP-PRIORITY" OR _all)
     hpx_add_config_define(HPX_HAVE_ABP_SCHEDULER)
-    set(HPX_HAVE_ABP_SCHEDULER ON CACHE INTERNAL "")
+    set(HPX_WITH_ABP_SCHEDULER ON CACHE INTERNAL "")
   endif()
   if(_scheduler STREQUAL "LOCAL" OR _all)
     hpx_add_config_define(HPX_HAVE_LOCAL_SCHEDULER)
-    set(HPX_HAVE_LOCAL_SCHEDULER ON CACHE INTERNAL "")
+    set(HPX_WITH_LOCAL_SCHEDULER ON CACHE INTERNAL "")
   endif()
   if(_scheduler STREQUAL "STATIC-PRIORITY" OR _all)
     hpx_add_config_define(HPX_HAVE_STATIC_PRIORITY_SCHEDULER)
-    set(HPX_HAVE_STATIC_PRIORITY_SCHEDULER ON CACHE INTERNAL "")
+    set(HPX_WITH_STATIC_PRIORITY_SCHEDULER ON CACHE INTERNAL "")
   endif()
   if(_scheduler STREQUAL "STATIC" OR _all)
     hpx_add_config_define(HPX_HAVE_STATIC_SCHEDULER)
-    set(HPX_HAVE_STATIC_SCHEDULER ON CACHE INTERNAL "")
+    set(HPX_WITH_STATIC_SCHEDULER ON CACHE INTERNAL "")
   endif()
   # The throttle scheduler is not supported neither on Windows nor on Mac
   if(HPX_WITH_APEX AND NOT WIN32 AND NOT APPLE)
     if(_scheduler STREQUAL "THROTTLE" OR _all)
       hpx_add_config_define(HPX_HAVE_THROTTLE_SCHEDULER)
-      set(HPX_HAVE_THROTTLE_SCHEDULER ON CACHE INTERNAL "")
+      set(HPX_WITH_THROTTLE_SCHEDULER ON CACHE INTERNAL "")
     endif()
   endif()
   if(_scheduler STREQUAL "HIERARCHY" OR _all)
     hpx_add_config_define(HPX_HAVE_HIERARCHY_SCHEDULER)
-    set(HPX_HAVE_HIERARCHY_SCHEDULER ON CACHE INTERNAL "")
+    set(HPX_WITH_HIERARCHY_SCHEDULER ON CACHE INTERNAL "")
   endif()
   if(_scheduler STREQUAL "PERIODIC-PRIORITY" OR _all)
     hpx_add_config_define(HPX_HAVE_PERIODIC_PRIORITY_SCHEDULER)
-    set(HPX_HAVE_PERIODIC_PRIORITY_SCHEDULER ON CACHE INTERNAL "")
+    set(HPX_WITH_PERIODIC_PRIORITY_SCHEDULER ON CACHE INTERNAL "")
   endif()
   unset(_all)
 endforeach()
@@ -879,9 +879,6 @@ hpx_check_for_cxx11_extended_friend_declarations(
 hpx_check_for_cxx11_function_template_default_args(
   REQUIRED "HPX needs support for C++11 defaulted function template arguments")
 
-hpx_check_for_cxx11_initializer_list(
-  DEFINITIONS HPX_HAVE_CXX11_INITIALIZER_LIST)
-
 hpx_check_for_cxx11_inline_namespaces(
   DEFINITIONS HPX_HAVE_CXX11_INLINE_NAMESPACES)
 
@@ -923,7 +920,7 @@ hpx_check_for_cxx11_std_cstdint(
   DEFINITIONS HPX_HAVE_CXX11_STD_CSTDINT)
 
 hpx_check_for_cxx11_std_initializer_list(
-  DEFINITIONS HPX_HAVE_CXX11_STD_INITIALIZER_LIST)
+  REQUIRED "HPX needs support for C++11 std::initializer_list")
 
 hpx_check_for_cxx11_std_is_bind_expression(
   DEFINITIONS HPX_HAVE_CXX11_STD_IS_BIND_EXPRESSION)
@@ -938,7 +935,7 @@ hpx_check_for_cxx11_std_lock_guard(
   REQUIRED "HPX needs support for C++11 std::lock_guard")
 
 hpx_check_for_cxx11_std_reference_wrapper(
-  DEFINITIONS HPX_HAVE_CXX11_STD_REFERENCE_WRAPPER)
+  REQUIRED "HPX needs support for C++11 std::ref and std::reference_wrapper")
 
 hpx_check_for_cxx11_std_shared_ptr(
   REQUIRED "HPX needs support for C++11 std::shared_ptr")

@@ -18,6 +18,8 @@
 #include <hpx/util/bind_action.hpp>
 #include <hpx/util/functional/colocated_helpers.hpp>
 
+#include <utility>
+
 namespace hpx { namespace detail
 {
     ///////////////////////////////////////////////////////////////////////////

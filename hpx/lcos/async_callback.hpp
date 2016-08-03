@@ -19,7 +19,8 @@
 #include <hpx/traits/is_valid_action.hpp>
 #include <hpx/traits/promise_local_result.hpp>
 
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
+#include <utility>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace hpx { namespace detail
@@ -27,7 +28,7 @@ namespace hpx { namespace detail
     // launch
     template <typename Action, typename Policy>
     struct async_cb_action_dispatch<Action, Policy,
-        typename boost::enable_if_c<
+        typename std::enable_if<
             traits::is_launch_policy<Policy>::value
         >::type>
     {
@@ -76,7 +77,7 @@ namespace hpx { namespace detail
         // distribution policy
         template <typename DistPolicy, typename Callback, typename ...Ts>
         HPX_FORCEINLINE static
-        typename boost::enable_if_c<
+        typename std::enable_if<
             traits::is_distribution_policy<DistPolicy>::value,
             lcos::future<
                 typename traits::promise_local_result<
@@ -118,7 +119,7 @@ namespace hpx { namespace detail
     // component::client
     template <typename Action, typename Client>
     struct async_cb_action_dispatch<Action, Client,
-        typename boost::enable_if_c<
+        typename std::enable_if<
             traits::is_client<Client>::value
         >::type>
     {
@@ -152,7 +153,7 @@ namespace hpx { namespace detail
     // distribution policy
     template <typename Action, typename Policy>
     struct async_cb_action_dispatch<Action, Policy,
-        typename boost::enable_if_c<
+        typename std::enable_if<
             traits::is_distribution_policy<Policy>::value
         >::type>
     {
@@ -195,7 +196,7 @@ namespace hpx { namespace detail
     // any action
     template <typename Action>
     struct async_cb_dispatch<Action,
-        typename boost::enable_if_c<
+        typename std::enable_if<
             traits::is_action<Action>::value
         >::type>
     {
@@ -259,7 +260,7 @@ namespace hpx { namespace detail
 
     template <typename Policy>
     struct async_cb_dispatch<Policy,
-        typename boost::enable_if_c<
+        typename std::enable_if<
             traits::is_launch_policy<Policy>::value
         >::type>
     {

@@ -19,7 +19,6 @@
 #include <hpx/util/safe_lexical_cast.hpp>
 
 #include <boost/atomic.hpp>
-#include <boost/assign/std/vector.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/host_name.hpp>
@@ -28,6 +27,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <utility>
 
 #if (defined(__linux) || defined(linux) || defined(__linux__))
 #include <ifaddrs.h>

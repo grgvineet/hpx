@@ -18,6 +18,7 @@
 #include <hpx/util/tuple.hpp>
 
 #include <memory>
+#include <utility>
 
 #include <boost/format.hpp>
 
