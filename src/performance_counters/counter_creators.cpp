@@ -362,8 +362,14 @@ namespace hpx { namespace performance_counters
             service += "/";
             service += service_name;
 
+<<<<<<< HEAD
             naming::id_type id = agas::resolve_name_sync(service, ec);
             if (id == naming::invalid_id) {
+=======
+            naming::id_type id;
+            bool result = agas::resolve_name(launch::sync, service, id, ec);
+            if (!result) {
+>>>>>>> master
                 HPX_THROWS_IF(ec, not_implemented,
                     "agas_raw_counter_creator",
                     "invalid counter name: " +
